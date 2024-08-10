@@ -1,5 +1,5 @@
 class Film:
-    def _init_(self, title, episode_id, release_date, opening_crawl, director):
+    def __init__(self, title, episode_id, release_date, opening_crawl, director):
         self.title = title
         self.episode_id = episode_id
         self.release_date = release_date
@@ -7,7 +7,7 @@ class Film:
         self.director = director
 
 class Species:
-    def _init_(self, name, height, classification, homeworld, language, characters, films):
+    def __init__(self, name, height, classification, homeworld, language, characters, films):
         self.name = name
         self.height = height
         self.classification = classification
@@ -17,7 +17,7 @@ class Species:
         self.films = films
 
 class Planet:
-    def _init_(self, name, orbital_period, rotation_period, population, climate, films, characters):
+    def __init__(self, name, orbital_period, rotation_period, population, climate, films, characters):
         self.name = name
         self.orbital_period = orbital_period
         self.rotation_period = rotation_period
@@ -27,7 +27,7 @@ class Planet:
         self.characters = characters
 
 class Character:
-    def _init_(self, name, homeworld, films, gender, species, vehicles, starships):
+    def __init__(self, name, homeworld, films, gender, species, vehicles, starships):
         self.name = name
         self.homeworld = homeworld
         self.films = films
@@ -38,7 +38,7 @@ class Character:
 
 
 class Starship:
-    def _init_(self, id, name, model, manufacturer, cost_in_credits, length, max_atmosphering_speed, crew, passengers, cargo_capacity, consumables, hyperdrive_rating, MGLT, starship_class, pilots, films):
+    def __init__(self, id, name, model, manufacturer, cost_in_credits, length, max_atmosphering_speed, crew, passengers, cargo_capacity, consumables, hyperdrive_rating, MGLT, starship_class, pilots, films):
         self.id = id
         self.name = name
         self.model = model
@@ -58,14 +58,14 @@ class Starship:
 
 
 class Mission:
-    def _init_(self, name, destination, starship, weapons, team):
+    def __init__(self, name, destination, starship, weapons, team):
         self.name = name
         self.destination = destination
         self.starship = starship
         self.weapons = weapons
         self.team = team
 
-    def _str_(self):
+    def __str__(self):
         return (f"Nombre de la mision: {self.name}\n"
                 f"Destino: {self.destination}\n"
                 f"Nave: {self.starship}\n"

@@ -2,7 +2,7 @@ import pandas as pd
 from src.models import Mission
 
 class MissionManager:
-    def _init_(self):
+    def __init__(self):
         self.missions = []
         self.weapons_df = self.leer_armas_csv()
         self.characters_df = self.leer_personajes_csv()
