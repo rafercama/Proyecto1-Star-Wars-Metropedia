@@ -24,14 +24,13 @@ def get_planets():
     response = requests.get(f"{BASE_URL}/planets")
     if response.status_code == 200:
         data = response.json()
-        if 'results' in data:
-            planets = []
-            for planet in data['results']:
-                planet_response = requests.get(planet['url'])
-                if planet_response.status_code == 200:
-                    planet_details = planet_response.json()['result']
-                    planets.append(planet_details['properties'])
-            return planets
+        planets = []
+        for planet in data['results']:
+            planet_response = requests.get(planet['url'])
+            if planet_response.status_code == 200:
+                planet_details = planet_response.json()['result']['properties']
+                planets.append(planet_details)
+        return planets
     return []
 
 def get_character(char_id):
@@ -40,19 +39,27 @@ def get_character(char_id):
         return response.json()["result"]["properties"]
     return {}
 
-def get_film(film_id):
-    response = requests.get(f"{BASE_URL}/films/{film_id}")
+def get_all_films():
+    response = requests.get(f"{BASE_URL}/films")
     if response.status_code == 200:
-        return response.json()["result"]["properties"]
-    return {}
+        return response.json()["result"]
+    return []
 
-def get_planet_name(planet_url):
-    if not planet_url:
+def get_planet_name2(planet_id):
+    response = requests.get(f"{BASE_URL}/planets/{planet_id}")
+    if response.status_code == 200:
+        return response.json()["result"]["properties"]["name"]
+    return "Desconocido"
+
+
+def get_planet_name1(planet_id):
+    if not planet_id:
         return "Unknown"
-    response = requests.get(planet_url)
+    response = requests.get(planet_id)
     if response.status_code == 200:
         return response.json()['result']['properties']['name']
     return "Unknown"
+
 
 def get_character_name(character_url):
     response = requests.get(character_url)
@@ -60,78 +67,80 @@ def get_character_name(character_url):
         return response.json()['result']['properties']['name']
     return "Unknown"
 
-def get_species_name(species_id):
-    if not species_id:
-        return "Unknown"
-    response = requests.get(f"{BASE_URL}/species/{species_id}")
-    if response.status_code == 200:
-        return response.json()["result"]["properties"]["name"]
-    return "Unknown"
+def obtener_especies():
+    url = 'https://www.swapi.tech/api/species'
+    species_dict = {}
+    while url:
+        response = requests.get(url)
+        data = response.json()
+        for species in data['results']:
+            species_detail_response = requests.get(species['url'])
+            species_detail_data = species_detail_response.json()
+            especie = species_detail_data['result']['properties']
+            for person_url in especie['people']:
+                species_dict[person_url] = especie['name']
+        url = data['next']
+    return species_dict
 
-def get_vehicle(vehicle_id):
-    response = requests.get(f"{BASE_URL}/vehicles/{vehicle_id}")
-    if response.status_code == 200:
-        return response.json()["result"]["properties"]["name"]
-    return "Unknown"
 
-def get_starship(starship_id):
-    response = requests.get(f"{BASE_URL}/starships/{starship_id}")
-    if response.status_code == 200:
-        return response.json()["result"]["properties"]["name"]
-    return "Unknown"
+def obtener_nombres(urls):
+    nombres = []
+    for url in urls:
+        response = requests.get(url)
+        data = response.json()
+        nombres.append(data['result']['properties']['name'])
+    return nombres
 
-def get_character_info(character_url):
-    response = requests.get(character_url)
-    if response.status_code == 200:
-        return response.json().get('result', {}).get('properties', {})
-    return {}
+def obtener_peliculas():
+    url = 'https://www.swapi.tech/api/films'
+    response = requests.get(url)
+    data = response.json()
+    peliculas = {}
+    for film in data['result']:
+        for character_url in film['properties']['characters']:
+            if character_url not in peliculas:
+                peliculas[character_url] = []
+            peliculas[character_url].append(film['properties']['title'])
+    return peliculas
 
-def search_character(query):
-    """Buscar personaje por una cadena de caracteres."""
-    response = requests.get(f"{BASE_URL}/people/?name={query}")
-    if response.status_code == 200:
-        characters = response.json()["result"]
+def obtener_planeta(url):
+    response = requests.get(url)
+    planeta_data = response.json()
+    return planeta_data['result']['properties']['name']
+
+
+def search_character(cadena):
+    url = 'https://www.swapi.tech/api/people'
+    response = requests.get(url)
+    data = response.json()
+    personajes = data['results']
+
+    # species_dict = obtener_especies()
+    peliculas_dict = obtener_peliculas()
+
+    resultados = [p for p in personajes if cadena.lower() in p['name'].lower()]
+    if not resultados:
+        print(f"No se encontraron personajes con el nombre '{cadena}'.")
+        return
+
+    for personaje in resultados:
+        detalle_response = requests.get(personaje['url'])
+        detalle_data = detalle_response.json()
+        propiedades = detalle_data['result']['properties']
+
+        nombre_planeta = obtener_planeta(propiedades['homeworld'])
+        peliculas = peliculas_dict.get(personaje['url'], [])
+
+        # nombre_especie = species_dict.get(personaje['url'], "Unknown")
         
-        if not characters:
-            print(f"No se encontraron personajes que coincidan con '{query}'")
-            return
+        # naves = obtener_nombres(propiedades.get('starships', []))
+        # vehiculos = obtener_nombres(propiedades.get('vehicles', []))
 
-        for char in characters:
-            character = char["properties"]
-            print(f"Nombre: {character['name']}")
-            print(f"Planeta de origen: {get_planet_name(character['homeworld'])}")
-
-            # Obtener información adicional del personaje
-            character_info = get_character_info(character['url'])
-
-            print("Aparece en:")
-            if 'films' in character_info:
-                for film_url in character_info['films']:
-                    film_id = film_url.split('/')[-1]
-                    film = get_film(film_id)
-                    print(f"  - {film.get('title', 'Desconocido')}")
-            else:
-                print("  - No se encontraron películas")
-
-            print(f"Género: {character_info.get('gender', 'Desconocido')}")
-            species_name = get_species_name(character_info.get('species', [None])[0])
-            print(f"Especie: {species_name}")
-
-            print("Vehículos:")
-            if 'vehicles' in character_info:
-                for vehicle_url in character_info['vehicles']:
-                    vehicle_id = vehicle_url.split('/')[-1]
-                    vehicle = get_vehicle(vehicle_id)
-                    print(f"  - {vehicle}")
-            else:
-                print("  - No se encontraron vehículos")
-
-            print("Naves estelares:")
-            if 'starships' in character_info:
-                for starship_url in character_info['starships']:
-                    starship_id = starship_url.split('/')[-1]
-                    starship = get_starship(starship_id)
-                    print(f"  - {starship}")
-            else:
-                print("  - No se encontraron naves estelares")
-            print()
+        print(f"Nombre: {propiedades['name']}")
+        print(f"Planeta de origen: {nombre_planeta}")
+        print(f"Títulos de episodios: {', '.join(peliculas) if peliculas else 'No se encontraron películas'}")
+        print(f"Género: {propiedades['gender']}")
+        # print(f"Especie: {nombre_especie}")
+        # print(f"Naves: {', '.join(naves) if naves else 'No se encontraron naves estelares'}")
+        # print(f"Vehículos: {', '.join(vehiculos) if vehiculos else 'No se encontraron vehículos'}")
+        print("-" * 50)

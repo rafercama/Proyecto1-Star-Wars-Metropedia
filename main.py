@@ -1,5 +1,4 @@
-import requests
-from src.api import get_movies,get_character_name,search_character, get_planets,get_species_list,get_species_details, get_character, get_film, get_planet_name
+from src.api import get_movies,get_character_name,search_character, get_planets,get_species_list,get_species_details, get_character, get_all_films, get_planet_name1, get_planet_name2
 from src.models import Film, Species, Planet
 from src.data_processing import generar_grafico_personajes_por_planeta, StarshipVisualizer
 from src.utils import mostrar_menu_graficos_naves, gestion_misiones
@@ -21,12 +20,14 @@ def list_movies():
         print(f"Fecha de lanzamiento: {film.release_date}")
         print(f"Texto inicial: {film.opening_crawl}")
         print(f"Director: {film.director}")
-        print()
+        print("-" * 50)
 
 def list_species():
     """Lista de especies de la saga."""
+    print("Buscando datos, por favor espere...")
+    print("-" * 50)
     especies_list = get_species_list()
-    datos_peliculas = requests.get('https://www.swapi.tech/api/films').json()['result']
+    datos_peliculas = get_movies()
 
     for especie in especies_list:
         detalles_especie = get_species_details(especie['url'])
@@ -36,9 +37,9 @@ def list_species():
             name=propiedades.get('name', 'Desconocida'),
             height=propiedades.get('average_height', 'Desconocido'),
             classification=propiedades.get('classification', 'Desconocido'),
-            homeworld=get_planet_name(propiedades.get('homeworld', '')),
+            homeworld=get_planet_name1(propiedades.get('homeworld', '')),
             language=propiedades.get('language', 'Desconocido'),
-            characters=[get_character_name(url) for url in propiedades.get('people', [])],
+            characters=[get_character_name(url) for url in propiedades.get('people', [])], 
             films=[pelicula['properties']['title'] for pelicula in datos_peliculas if especie['url'] in pelicula['properties']['species']]
         )
 
@@ -56,26 +57,40 @@ def list_species():
         for titulo in especie_instance.films:
             print(f"  - {titulo}")
 
-        print()
+        print("-" * 50)
+
 
 def list_planets():
     """Lista de planetas de la saga."""
+    print("Buscando datos, por favor espere...")
+    print("-" * 50)
     planetas = get_planets()
+
+    """Lista de planetas y su relación con películas y personajes."""
+    # planets_dict = {}
+    # characters_dict = {}
+
+    # Obtener todas las películas
+    # films = get_all_films()
+
+    # for film in films:
+    #     film_title = film['properties']['title']
+    #     film_planets = film['properties']['planets']
+    #     # Relacionar planetas con películas
+    #     for planet_url in film_planets:
+    #         planet_id = planet_url.split('/')[-1]
+    #         if planet_id not in planets_dict:
+    #             planets_dict[planet_id] = {
+    #                 'name': get_planet_name2(planet_id),
+    #                 'films': [],
+    #                 'characters': []
+    #             }
+    #         planets_dict[planet_id]['films'].append(film_title)
+
+    # Iterar sobre la lista de planetas obtenidos
     for planet_data in planetas:
         films = []
         characters = []
-
-        if 'films' in planet_data:
-            for film_url in planet_data['films']:
-                film_id = film_url.split('/')[-1]
-                pelicula = get_film(film_id)
-                films.append(pelicula.get('title', 'Desconocida'))
-        
-        if 'residents' in planet_data:
-            for resident_url in planet_data['residents']:
-                resident_id = resident_url.split('/')[-1]
-                personaje = get_character(resident_id)
-                characters.append(personaje.get('name', 'Desconocido'))
         
         planet = Planet(
             name=planet_data.get('name', 'Desconocido'),
@@ -94,22 +109,18 @@ def list_planets():
         print(f"Clima: {planet.climate}")
         print(f"Terreno: {planet_data.get('terrain', 'Desconocido')}")
         print(f"Agua Superficial: {planet_data.get('surface_water', 'Desconocido')}")
-        
-        print("Aparece en:")
-        if planet.films:
-            for film in planet.films:
-                print(f"  - {film}")
-        else:
-            print("  - No se encontraron películas")
-        
-        print("Residentes:")
-        if planet.characters:
-            for character in planet.characters:
-                print(f"  - {character}")
-        else:
-            print("  - No se encontraron residentes")
-        
-        print()
+
+        print("-" * 50)
+        # if planet_id in planets_dict:
+        #     print("  Aparece en los episodios:")
+        #     for film in planets_dict[planet_id]['films']:
+        #         print(f"    - {film}")
+
+        # print()
+
+
+
+
 
 def display_menu():
     mission_manager = MissionManager()
