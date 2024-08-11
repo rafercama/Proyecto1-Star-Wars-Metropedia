@@ -273,3 +273,30 @@ class MissionManager:
         print("-" * 50)
         print(mission)
         print("-" * 50)
+
+    def guardar_misiones(self):
+        with open('data/missions.txt', 'w') as file:
+            for mission in self.missions:
+                file.write(str(mission) + '\n')
+        print("Misiones guardadas exitosamente en data/missions.txt.")
+
+    def cargar_misiones(self):
+        try:
+            with open('data/missions.txt', 'r') as file:
+                content = file.read().strip()
+                if not content:
+                    print("El archivo de misiones está vacío.")
+                    return
+                missions_data = content.split('\n\n')
+                for mission_data in missions_data:
+                    lines = mission_data.split('\n')
+                    name = lines[0].split(': ')[1]
+                    destination = lines[1].split(': ')[1]
+                    starship = lines[2].split(': ')[1]
+                    weapons = lines[3].split(': ')[1].split(', ')
+                    team = lines[4].split(': ')[1].split(', ')
+                    mission = Mission(name, destination, starship, weapons, team)
+                    self.missions.append(mission)
+            print("Misiones cargadas exitosamente desde data/missions.txt.")
+        except FileNotFoundError:
+            print("El archivo de misiones no existe.")

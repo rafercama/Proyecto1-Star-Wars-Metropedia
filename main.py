@@ -135,9 +135,11 @@ def display_menu():
         print("6. Gráficos de Naves")
         print("7. Mostrar estadísticas de Naves")
         print("8. Gestión de Misiones")
-        print("9. Salir")
+        print("9. Guardar misiones")
+        print("10. Cargar misiones")
+        print("11. Salir")
         
-        option = input("Elige una opción (1-9): ")
+        option = input("Elige una opción (1-11): ")
         
         if option == "1":
             print("\nLista de Películas:")
@@ -168,13 +170,16 @@ def display_menu():
         elif option == "8":
             gestion_misiones(mission_manager)
         elif option == "9":
+            mission_manager.guardar_misiones()
+        elif option == "10":
+            mission_manager.cargar_misiones()
+        elif option == "11":
             print("Saliendo del programa...")
             break
         else:
-            print("Opción no válida. Por favor, elige una opción entre 1 y 9.")
+            print("Opción no válida. Por favor, elige una opción entre 1 y 11.")
         
         print("\n")
-
 
 if __name__ == "__main__":
     display_menu()
