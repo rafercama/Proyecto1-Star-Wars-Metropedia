@@ -5,7 +5,13 @@ from src.utils import mostrar_menu_graficos_naves, gestion_misiones
 from src.mission_manager import MissionManager
 
 def list_movies():
-    """Lista de películas de la saga."""
+    """
+    Lista las películas de la saga Star Wars.
+    
+    Obtiene una lista de películas a través de la función `get_movies()` y las imprime 
+    en la consola con detalles como el título, episodio, fecha de lanzamiento, texto inicial 
+    y director.
+    """
     peliculas = get_movies()
     for pelicula in peliculas:
         film = Film(
@@ -23,7 +29,15 @@ def list_movies():
         print("-" * 50)
 
 def list_species():
-    """Lista de especies de la saga."""
+    """
+    Lista las especies de la saga Star Wars.
+    
+    Obtiene una lista de especies a través de la función `get_species_list()`. Para cada 
+    especie, se obtienen detalles adicionales usando `get_species_details()` y se crea 
+    una instancia de la clase `Species`. Finalmente, se imprimen los detalles de cada especie, 
+    incluyendo su nombre, altura promedio, clasificación, planeta de origen, idioma, personajes 
+    asociados y películas en las que aparece.
+    """
     print("Buscando datos, por favor espere...")
     print("-" * 50)
     especies_list = get_species_list()
@@ -61,7 +75,13 @@ def list_species():
 
 
 def list_planets():
-    """Lista de planetas de la saga."""
+    """
+    Lista los planetas de la saga Star Wars.
+    
+    Obtiene una lista de planetas a través de la función `get_planets()` y crea una instancia 
+    de la clase `Planet` para cada planeta. Luego, imprime detalles como el nombre, período orbital, 
+    período de rotación, población, clima, terreno y agua superficial de cada planeta.
+    """
     print("Buscando datos, por favor espere...")
     print("-" * 50)
     planetas = get_planets()
@@ -119,11 +139,15 @@ def list_planets():
         # print()
 
 
-
-
-
 def display_menu():
-    mission_manager = MissionManager()
+    """
+    Muestra el menú principal de la aplicación y maneja la navegación entre las opciones.
+    
+    El menú permite al usuario listar películas, especies y planetas, buscar personajes, 
+    generar gráficos de personajes por planeta, mostrar gráficos de naves, mostrar estadísticas 
+    de naves, gestionar misiones, guardar y cargar misiones, y salir de la aplicación.
+    """
+    mission_manager = MissionManager() # Instancia del gestor de misiones
 
     while True:
         print("===== Menú Principal =====")

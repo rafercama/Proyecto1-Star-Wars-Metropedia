@@ -3,29 +3,36 @@ from src.models import Mission
 
 class MissionManager:
     def __init__(self):
+         # Inicializa la lista de misiones y carga los datos de armas y personajes desde archivos CSV.
         self.missions = []
-        self.weapons_df = self.leer_armas_csv()
-        self.characters_df = self.leer_personajes_csv()
+        self.weapons_df = self.leer_armas_csv() # Carga los datos de armas en un DataFrame.
+        self.characters_df = self.leer_personajes_csv() # Carga los datos de personajes en un DataFrame.
 
     def leer_armas_csv(self):
+        # Lee el archivo CSV que contiene información sobre las armas y devuelve un DataFrame.
         ruta_csv = 'data/csv/weapons.csv'
         return pd.read_csv(ruta_csv)
 
     def leer_personajes_csv(self):
+        # Lee el archivo CSV que contiene información sobre los personajes y devuelve un DataFrame.
         ruta_csv = 'data/csv/characters.csv'
         return pd.read_csv(ruta_csv)
 
     def mostrar_armas_disponibles(self):
+        # Muestra la lista de armas disponibles con su ID y tipo.
         print("Armas disponibles:")
         for index, row in self.weapons_df.iterrows():
             print(f"{row['id']}. {row['name']} ({row['type']})")
 
     def mostrar_personajes_disponibles(self):
+        # Muestra la lista de personajes disponibles con su ID, planeta de origen y especie.
         print("Personajes disponibles:")
         for index, row in self.characters_df.iterrows():
             print(f"{row['id']}. {row['name']} (Homeworld: {row['homeworld']}, Species: {row['species']})")
 
     def definir_mision(self):
+        # Define una nueva misión con nombre, planeta destino, nave, armas y equipo.
+        # Se valida que no haya más de 5 misiones definidas y que todos los campos sean válidos.
         if len(self.missions) >= 5:
             print("No se pueden definir más de 5 misiones.")
             return
@@ -103,6 +110,7 @@ class MissionManager:
         print("-" * 50)
 
     def mostrar_misiones(self):
+        # Muestra la lista de misiones definidas con todos sus detalles.
         if not self.missions:
             print("No hay misiones definidas.")
             return
@@ -117,6 +125,8 @@ class MissionManager:
             print("-" * 50)
 
     def modificar_mision(self):
+        # Permite modificar los detalles de una misión existente.
+        # Primero muestra todas las misiones, luego solicita la selección de la misión a modificar.
         self.mostrar_misiones()
         if not self.missions:
             return
@@ -177,6 +187,8 @@ class MissionManager:
 
 
     def modificar_armas(self, mission):
+        # Permite modificar la lista de armas de una misión.
+        # Se puede agregar o eliminar armas de la misión seleccionada.
         while True:
             print(f"\nArmas actuales: {', '.join(mission.weapons)}")
             print("1. Agregar arma")
@@ -217,6 +229,8 @@ class MissionManager:
                 print("Opción no válida. Intente nuevamente.")
 
     def modificar_integrantes(self, mission):
+        # Permite modificar la lista de integrantes de una misión.
+        # Se puede agregar o eliminar integrantes del equipo seleccionado.
         while True:
             print(f"\nIntegrantes actuales: {', '.join(mission.team)}")
             print("1. Agregar integrante")
@@ -275,12 +289,16 @@ class MissionManager:
         print("-" * 50)
 
     def guardar_misiones(self):
+        # Guarda la lista de misiones en un archivo de texto.
+        # Las misiones se guardan en un formato estructurado para facilitar la carga posterior.
         with open('data/missions.txt', 'w') as file:
             for mission in self.missions:
                 file.write(str(mission) + '\n')
         print("Misiones guardadas exitosamente en data/missions.txt.")
 
     def cargar_misiones(self):
+        # Carga las misiones desde un archivo de texto.
+        # Las misiones se cargan y agregan a la lista existente de misiones.
         try:
             with open('data/missions.txt', 'r') as file:
                 content = file.read().strip()

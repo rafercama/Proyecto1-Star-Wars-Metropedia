@@ -1,4 +1,5 @@
 class Film:
+    # Representa una película de la saga Star Wars.
     def __init__(self, title, episode_id, release_date, opening_crawl, director):
         self.title = title
         self.episode_id = episode_id
@@ -7,6 +8,7 @@ class Film:
         self.director = director
 
 class Species:
+    # Representa una especie en el universo de Star Wars.
     def __init__(self, name, height, classification, homeworld, language, characters, films):
         self.name = name
         self.height = height
@@ -17,6 +19,7 @@ class Species:
         self.films = films
 
 class Planet:
+    # Representa un planeta en el universo de Star Wars.
     def __init__(self, name, orbital_period, rotation_period, population, climate, films, characters):
         self.name = name
         self.orbital_period = orbital_period
@@ -27,6 +30,7 @@ class Planet:
         self.characters = characters
 
 class Character:
+    # Representa un personaje en el universo de Star Wars.
     def __init__(self, name, homeworld, films, gender, species, vehicles, starships):
         self.name = name
         self.homeworld = homeworld
@@ -38,6 +42,7 @@ class Character:
 
 
 class Starship:
+    # Representa una nave en el universo de Star Wars.
     def __init__(self, id, name, model, manufacturer, cost_in_credits, length, max_atmosphering_speed, crew, passengers, cargo_capacity, consumables, hyperdrive_rating, MGLT, starship_class, pilots, films):
         self.id = id
         self.name = name
@@ -58,6 +63,7 @@ class Starship:
 
 
 class Mission:
+    # Representa una misión en el universo de Star Wars.
     def __init__(self, name, destination, starship, weapons, team):
         self.name = name
         self.destination = destination
